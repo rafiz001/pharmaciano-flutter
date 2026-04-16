@@ -19,9 +19,9 @@ class LoginScreen extends ConsumerWidget {
                 const Text("Super Admin"),
                 IconButton(
                   onPressed: () {
-                  _emailController.text = "superadmin@pharmaciano.com";
-                  _passwordController.text = "superadmin123";
-                  Navigator.pop(context);
+                    _emailController.text = "superadmin@pharmaciano.com";
+                    _passwordController.text = "superadmin123";
+                    Navigator.pop(context);
                   },
                   icon: const Icon(Icons.keyboard_return),
                 ),
@@ -32,10 +32,10 @@ class LoginScreen extends ConsumerWidget {
               children: [
                 const Text("Sales Man"),
                 IconButton(
-                  onPressed: () { 
-                  _emailController.text = "rafiz001@gmail.com";
-                  _passwordController.text = "rafiz123";
-                  Navigator.pop(context);
+                  onPressed: () {
+                    _emailController.text = "rafiz001@gmail.com";
+                    _passwordController.text = "rafiz123";
+                    Navigator.pop(context);
                   },
                   icon: const Icon(Icons.keyboard_return),
                 ),
@@ -82,17 +82,21 @@ class LoginScreen extends ConsumerWidget {
                     return null;
                   },
                 ),
-                TextFormField(
+                Consumer(builder: (context,refr,child) {
+                    final passVisible = refr.watch(passVisibleProvider);
+                  return TextFormField(
                   controller: _passwordController,
-                  obscureText: true,
+                  obscureText: passVisible,
                   decoration: InputDecoration(
                     labelText: "Password",
                     suffixIcon: IconButton(
-                      onPressed: () {},
-                      icon: Icon(Icons.visibility),
+                      onPressed: () {refr.read(passVisibleProvider.notifier).toggle();},
+                      icon: Icon(passVisible?Icons.visibility:Icons.visibility_off),
                     ),
                   ),
-                ),
+                );
+                }),
+                
                 Padding(padding: EdgeInsetsGeometry.only(top: 5, bottom: 5)),
                 Consumer(
                   builder: (context, ref, child) {
@@ -104,18 +108,24 @@ class LoginScreen extends ConsumerWidget {
                       onPressed: () {
                         bool isFormOk = _formKey.currentState!.validate();
                         if (isFormOk) {
-                          ref.read(loginCredentialProvider.notifier).state = [
-                            _emailController.text,
-                            _passwordController.text,
-                          ];
-                          ref.invalidate(loginProvider);
+                          ref
+                              .read(loginProvider.notifier)
+                              .login(
+                                _emailController.text,
+                                _passwordController.text,
+                              );
                           
                         }
                       },
                       child: loginProviderI.when(
-                        data: (data) => Text("got data"),
+                        data: (data) {
+                          if (data == null) {
+                            return const Text("Login"); // Initial state
+                          }
+                          return const Text("Login Success");
+                        },
                         loading: () => CircularProgressIndicator(),
-                        error: (error, stackTrace) => Text(error.toString()),
+                        error: (error, stackTrace) {print(error);print(stackTrace);return Text("see console");},
                       ),
                     );
                   },
