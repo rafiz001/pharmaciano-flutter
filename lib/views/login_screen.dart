@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmaciano/app/login_providers.dart';
@@ -82,25 +83,41 @@ class LoginScreen extends ConsumerWidget {
                     return null;
                   },
                 ),
-                Consumer(builder: (context,refr,child) {
+                Consumer(
+                  builder: (context, refr, child) {
                     final passVisible = refr.watch(passVisibleProvider);
-                  return TextFormField(
-                  controller: _passwordController,
-                  obscureText: passVisible,
-                  decoration: InputDecoration(
-                    labelText: "Password",
-                    suffixIcon: IconButton(
-                      onPressed: () {refr.read(passVisibleProvider.notifier).toggle();},
-                      icon: Icon(passVisible?Icons.visibility:Icons.visibility_off),
-                    ),
-                  ),
-                );
-                }),
-                
+                    return TextFormField(
+                      controller: _passwordController,
+                      obscureText: passVisible,
+                      decoration: InputDecoration(
+                        labelText: "Password",
+                        suffixIcon: IconButton(
+                          onPressed: () {
+                            refr.read(passVisibleProvider.notifier).toggle();
+                          },
+                          icon: Icon(
+                            passVisible
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+
                 Padding(padding: EdgeInsetsGeometry.only(top: 5, bottom: 5)),
                 Consumer(
                   builder: (context, ref, child) {
                     final loginProviderI = ref.watch(loginProvider);
+                    ref.listen<AsyncValue>(loginProvider, (previous, state) {
+                      // Show only when transitioning TO an error state
+                      if (previous?.hasError == false && state.hasError) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Error on logging in.')),
+                        );
+                      }
+                    });
                     return ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         padding: EdgeInsets.all(15),
@@ -114,7 +131,6 @@ class LoginScreen extends ConsumerWidget {
                                 _emailController.text,
                                 _passwordController.text,
                               );
-                          
                         }
                       },
                       child: loginProviderI.when(
@@ -125,7 +141,13 @@ class LoginScreen extends ConsumerWidget {
                           return const Text("Login Success");
                         },
                         loading: () => CircularProgressIndicator(),
-                        error: (error, stackTrace) {print(error);print(stackTrace);return Text("see console");},
+                        error: (error, stackTrace) {
+                          if (kDebugMode) {
+                            print(error);
+                            print(stackTrace);
+                          }
+                          return const Text("Login");
+                        },
                       ),
                     );
                   },
