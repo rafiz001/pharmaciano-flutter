@@ -6,6 +6,7 @@ class Env {
   static String get appName =>  'Pharmaciano';
   
   static String get loginEndpoint => '$apiBaseUrl/api/$apiVersion/auth/login';
+  static String get profileEndpoint => '$apiBaseUrl/api/$apiVersion/users/profile';
   
   
 

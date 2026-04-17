@@ -31,19 +31,10 @@ dependencies:
   flutter:
     sdk: flutter
 
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.8
-  
-  # State Management - Riverpod
   flutter_riverpod: ^3.3.1
-  
-  # Local Database - Hive
-  hive: ^2.2.3
-  hive_flutter: ^1.1.0
-  
-  # HTTP Client
   dio: ^5.9.2
+  shared_preferences: ^2.5.5
+  flutter_session_jwt: ^1.1.0
 
 
 dev_dependencies:

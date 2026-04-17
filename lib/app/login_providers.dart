@@ -1,18 +1,21 @@
 // lib/app/login_providers.dart
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmaciano/core/constants/env.dart';
-import 'package:pharmaciano/views/models/user_model.dart';
+import 'package:pharmaciano/models/auth_model.dart';
+import 'package:flutter_session_jwt/flutter_session_jwt.dart';
 
-// Make UserModel nullable
-class LoginNotifier extends AsyncNotifier<UserModel?> {
+// Make AuthModel nullable
+class LoginNotifier extends AsyncNotifier<AuthModel?> {
   @override
-  Future<UserModel?> build() async {
+  Future<AuthModel?> build() async {
     state = const AsyncLoading();
     return null;
   }
 
-  Future<void> login(String email, String password) async {
+  Future<void> login(String email, String password, BuildContext ctx) async {
     // Set loading state
     state = const AsyncLoading();
 
@@ -26,8 +29,20 @@ class LoginNotifier extends AsyncNotifier<UserModel?> {
       );
 
       if (response.statusCode == 200) {
-        final userData = UserModel.fromJson(response.data);
+        final userData = AuthModel.fromJson(response.data);
+        if(kDebugMode){
         print(userData.toJson());
+        }
+
+        if(userData.data!=null && userData.data!.token!=null){
+         await FlutterSessionJwt.saveToken(userData.data!.token!);
+        }else{
+          state = AsyncError("Data malfunctioned", StackTrace.current);
+        }
+        if(ctx.mounted){
+        Navigator.pushReplacementNamed(ctx, "/dashboard");
+        }
+
         state = AsyncData(userData);
       } else {
         state = AsyncError("Login failed", StackTrace.current);
@@ -42,7 +57,7 @@ class LoginNotifier extends AsyncNotifier<UserModel?> {
   }
 }
 
-final loginProvider = AsyncNotifierProvider<LoginNotifier, UserModel?>(() {
+final loginProvider = AsyncNotifierProvider<LoginNotifier, AuthModel?>(() {
   return LoginNotifier();
 });
 

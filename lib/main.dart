@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pharmaciano/views/dashboard_screen.dart';
 import 'package:pharmaciano/views/login_screen.dart';
 import 'core/constants/env.dart';
 
@@ -22,6 +23,11 @@ class MyApp extends ConsumerWidget {
           seedColor: Colors.green,
           brightness: Brightness.light,
         ),
+        textTheme: const TextTheme(
+          bodyMedium: TextStyle(fontSize: 20.0),
+          labelLarge: TextStyle(fontSize: 20),
+          labelSmall: TextStyle(fontSize: 20),
+        ),
         useMaterial3: true,
       ),
       darkTheme: ThemeData(
@@ -32,7 +38,6 @@ class MyApp extends ConsumerWidget {
         textTheme: const TextTheme(
           bodyMedium: TextStyle(fontSize: 20.0),
           labelLarge: TextStyle(fontSize: 20),
-          //labelMedium: TextStyle(fontSize: 20),
           labelSmall: TextStyle(fontSize: 20),
         ),
         useMaterial3: true,
@@ -41,7 +46,7 @@ class MyApp extends ConsumerWidget {
       initialRoute: '/',
       routes: {
         '/': (context) =>  LoginScreen(),
-        // '/home': (context) => const HomeScreen(),
+        '/dashboard': (context) => const DashboardScreen(),
       },
     );
   }

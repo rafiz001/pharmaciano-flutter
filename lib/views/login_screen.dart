@@ -2,8 +2,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmaciano/app/login_providers.dart';
+import 'package:pharmaciano/core/utils/auth/check_already_login.dart';
 
-class LoginScreen extends ConsumerWidget {
+class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
 
   void autoFillDialog(BuildContext ctx) {
@@ -60,14 +61,18 @@ class LoginScreen extends ConsumerWidget {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
+    checkIsAlreadyLoggedIn(context);
+    double screenWidth = MediaQuery.of(context).size.width;
     // print("from build");
     return Scaffold(
       body: Center(
         child: Form(
           key: _formKey,
           child: Padding(
-            padding: const EdgeInsets.all(10.0),
+            padding: screenWidth > 440
+                ? EdgeInsetsGeometry.only(left: 100, right: 100)
+                : EdgeInsetsGeometry.all(10),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -130,15 +135,14 @@ class LoginScreen extends ConsumerWidget {
                               .login(
                                 _emailController.text,
                                 _passwordController.text,
+                                context,
                               );
                         }
                       },
                       child: loginProviderI.when(
                         data: (data) {
-                          if (data == null) {
-                            return const Text("Login"); // Initial state
-                          }
-                          return const Text("Login Success");
+                          
+                          return const Text("Login");
                         },
                         loading: () => CircularProgressIndicator(),
                         error: (error, stackTrace) {
