@@ -5,7 +5,6 @@ import 'core/constants/env.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Env.load();
   // await HiveHelper.init();
   runApp(const ProviderScope(child: MyApp()));
 }
