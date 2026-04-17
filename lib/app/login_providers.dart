@@ -7,7 +7,7 @@ import 'package:pharmaciano/views/models/user_model.dart';
 // Make UserModel nullable
 class LoginNotifier extends AsyncNotifier<UserModel?> {
   @override
-  Future<UserModel?> build() async{
+  Future<UserModel?> build() async {
     state = const AsyncLoading();
     return null;
   }
@@ -15,16 +15,16 @@ class LoginNotifier extends AsyncNotifier<UserModel?> {
   Future<void> login(String email, String password) async {
     // Set loading state
     state = const AsyncLoading();
-    
+
     try {
       final dio = Dio();
       dio.options.headers['Content-Type'] = 'application/json';
-      
+
       final response = await dio.post(
-        "${Env.apiBaseUrl}/api/v1/auth/login",
+        Env.loginEndpoint,
         data: {"email": email, "password": password},
       );
-      
+
       if (response.statusCode == 200) {
         final userData = UserModel.fromJson(response.data);
         print(userData.toJson());
@@ -36,7 +36,7 @@ class LoginNotifier extends AsyncNotifier<UserModel?> {
       state = AsyncError(e.toString(), StackTrace.current);
     }
   }
-  
+
   void reset() {
     state = const AsyncData(null);
   }
@@ -46,14 +46,14 @@ final loginProvider = AsyncNotifierProvider<LoginNotifier, UserModel?>(() {
   return LoginNotifier();
 });
 
-
-
-final passVisibleProvider = NotifierProvider<PassVisibleNotifier, bool>(PassVisibleNotifier.new);
+final passVisibleProvider = NotifierProvider<PassVisibleNotifier, bool>(
+  PassVisibleNotifier.new,
+);
 
 class PassVisibleNotifier extends Notifier<bool> {
   @override
-  bool build() => true; 
+  bool build() => true;
 
-  void toggle() => state=!state;
+  void toggle() => state = !state;
   void set(bool value) => state = value;
 }
