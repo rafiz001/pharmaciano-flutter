@@ -21,7 +21,7 @@ class ProfileNotifier extends AsyncNotifier<UserModel?> {
       print(savedToken);
       final dio = Dio();
       dio.options.headers['Content-Type'] = 'application/json';
-      dio.options.headers['Authorization'] = savedToken;
+      dio.options.headers['Authorization'] = 'Bearer $savedToken';
       final response = await dio.get(
         Env.profileEndpoint,
         //data: {"email": email, "password": password},
@@ -46,6 +46,6 @@ class ProfileNotifier extends AsyncNotifier<UserModel?> {
   }
 }
 
-final profileProvider = AsyncNotifierProvider<ProfileNotifier, UserModel?>(() {
+final profileProvider = AsyncNotifierProvider.autoDispose<ProfileNotifier, UserModel?>(() {
   return ProfileNotifier();
 });

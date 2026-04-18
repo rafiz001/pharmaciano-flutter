@@ -7,6 +7,10 @@ class Env {
   
   static String get loginEndpoint => '$apiBaseUrl/api/$apiVersion/auth/login';
   static String get profileEndpoint => '$apiBaseUrl/api/$apiVersion/users/profile';
+
+  static String get getInventoryBatchesEndpoint => '$apiBaseUrl/api/$apiVersion/inventory-batches';
+  static String get getAllMedicinesEndpoint => '$apiBaseUrl/api/$apiVersion/medicines';
+
   
   
 
