@@ -5,6 +5,6 @@ void logout(BuildContext cntx) async {
   await FlutterSessionJwt.deleteToken();
 
   if (cntx.mounted) {
-    Navigator.pushReplacementNamed(cntx, "/");
+    Navigator.pushNamedAndRemoveUntil(cntx, '/', (route) => false);
   }
 }
