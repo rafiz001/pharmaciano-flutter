@@ -20,6 +20,7 @@ class _BarcodeWindowState extends ConsumerState<BarcodeWindow> {
     _controller = MobileScannerController(
       torchEnabled: flashOn,
       autoZoom: true,
+      // detectionSpeed:
     );
   }
 
@@ -51,13 +52,16 @@ class _BarcodeWindowState extends ConsumerState<BarcodeWindow> {
           MobileScanner(
             controller: _controller,
 
-            onDetect: (capture) {
+            onDetect: (capture) async {
               String? result = capture.barcodes.first.rawValue;
               if (result != null) {
                 ref
                     .read(barcodeProvider.notifier)
                     .update(capture.barcodes.first.rawValue!);
-                    Navigator.pop(context);
+                await _controller.stop();
+                if (context.mounted) {
+                  Navigator.pop(context);
+                }
               }
               if (kDebugMode) {
                 print(capture.barcodes.first.rawValue);
