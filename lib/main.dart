@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmaciano/views/dashboard_screen.dart';
+import 'package:pharmaciano/views/final_sale_screen.dart';
 import 'package:pharmaciano/views/login_screen.dart';
 import 'package:pharmaciano/views/pos_screen.dart';
 import 'core/constants/env.dart';
@@ -49,6 +50,7 @@ class MyApp extends ConsumerWidget {
         '/': (context) =>  LoginScreen(),
         '/dashboard': (context) => const DashboardScreen(),
         '/pos': (context) => PosScreen(),
+        '/posComplete':(context) => FinalSaleScreen(),
       },
     );
   }

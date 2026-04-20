@@ -36,6 +36,8 @@ dependencies:
   shared_preferences: ^2.5.5
   flutter_session_jwt: ^1.1.0
   mobile_scanner: ^7.2.0
+  flutter_typeahead: ^6.0.0
+  file_saver: ^0.3.1
 
 
 dev_dependencies:

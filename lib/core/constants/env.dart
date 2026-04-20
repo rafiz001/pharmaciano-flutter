@@ -1,6 +1,6 @@
 
 class Env {
-  static String get apiBaseUrl =>  'https://pharmaciano-backend.vercel.app';
+  static String get apiBaseUrl =>  'https://pharmaciano-backend.vercel.app';//'https://pharmaciano-backend.vercel.app';
   static String get apiVersion => 'v1';
   static String get jwtSecret =>  'i-am-rafiz';
   static String get appName =>  'Pharmaciano';
@@ -10,7 +10,8 @@ class Env {
 
   static String get getInventoryBatchesEndpoint => '$apiBaseUrl/api/$apiVersion/inventory-batches';
   static String get getAllMedicinesEndpoint => '$apiBaseUrl/api/$apiVersion/medicines';
-
+  static String get createSaleEndpoint => '$apiBaseUrl/api/$apiVersion/sales';
+  static String get getSalesPdfEndpoint => '$apiBaseUrl/api/$apiVersion/sales/{id}/invoice';
   
   
 
