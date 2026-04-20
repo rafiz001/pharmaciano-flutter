@@ -271,3 +271,30 @@ class BarcodeNotifier extends Notifier<String> {
 final barcodeProvider = NotifierProvider<BarcodeNotifier, String>(
   () => BarcodeNotifier(),
 );
+
+void callAddToCart(
+  MedicineModel medicine,
+  List<BatchModel> data,
+  WidgetRef refMain,
+) {
+  bool found = false;
+  for (final batch in data) {
+    if (batch.medicineId!.name == medicine.name && batch.quantity! > 0) {
+      found = true;
+      refMain
+          .read(cartsProvider.notifier)
+          .addCart(
+            CartModel(
+              medicineName: medicine.name ?? " ",
+              batchNo: batch.batchNo ?? " ",
+              quantity: 1,
+              price: medicine.unitPrice ?? 0,
+              strength: "${medicine.strength ?? ""}${medicine.unit ?? ""}",
+              batchQty: batch.quantity ?? 0,
+            ),
+          );
+      break;
+    }
+  }
+  if (!found) print("not found");
+}

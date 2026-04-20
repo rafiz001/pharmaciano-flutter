@@ -35,7 +35,7 @@ class PosScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef refMain) {
     final batches = refMain.watch(batchesProvider);
-    final barcode = refMain.listen(barcodeProvider, (prev,next){
+    refMain.listen(barcodeProvider, (prev,next){
       _controller.text=next;
     });
     return batches.when(
@@ -62,28 +62,7 @@ class PosScreen extends ConsumerWidget {
             ),
             onSelected: (medicine) {
               _controller.clear();
-              bool found = false;
-              for (final batch in data) {
-                if (batch.medicineId!.name == medicine.name &&
-                    batch.quantity! > 0) {
-                  found = true;
-                  refMain
-                      .read(cartsProvider.notifier)
-                      .addCart(
-                        CartModel(
-                          medicineName: medicine.name ?? " ",
-                          batchNo: batch.batchNo ?? " ",
-                          quantity: 1,
-                          price: medicine.unitPrice ?? 0,
-                          strength:
-                              "${medicine.strength ?? ""}${medicine.unit ?? ""}",
-                          batchQty: batch.quantity ?? 0,
-                        ),
-                      );
-                  break;
-                }
-              }
-              if (!found) print("not found");
+              callAddToCart(medicine,data,refMain);
             },
             debounceDuration: const Duration(milliseconds: 500),
             loadingBuilder: (context) => const LinearProgressIndicator(),
