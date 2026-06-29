@@ -66,96 +66,128 @@ class LoginScreen extends StatelessWidget {
     double screenWidth = MediaQuery.of(context).size.width;
     // print("from build");
     return Scaffold(
+      backgroundColor: Colors.grey,
       body: Center(
-        child: Form(
-          key: _formKey,
-          child: Padding(
-            padding: screenWidth > 440
-                ? EdgeInsetsGeometry.only(left: 100, right: 100)
-                : EdgeInsetsGeometry.all(10),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: 440),
+          child: Container(
+            color: Colors.white,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                TextFormField(
-                  controller: _emailController,
-                  decoration: InputDecoration(labelText: "Email"),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Email should not null';
-                    } else if (!value.contains("@")) {
-                      return 'Enter valid email';
-                    }
-                    return null;
-                  },
+                Expanded(
+                  flex: 2,
+                  child: ClipPath(
+                    clipper: MyClipper(),
+                    child: Container(color: Colors.orange, height: 150),
+                  ),
                 ),
-                Consumer(
-                  builder: (context, refr, child) {
-                    final passVisible = refr.watch(passVisibleProvider);
-                    return TextFormField(
-                      controller: _passwordController,
-                      obscureText: passVisible,
-                      decoration: InputDecoration(
-                        labelText: "Password",
-                        suffixIcon: IconButton(
-                          onPressed: () {
-                            refr.read(passVisibleProvider.notifier).toggle();
+                Expanded(
+                  flex: 3,
+                  child: Form(
+                  key: _formKey,
+                  child: Padding(
+                    // padding: screenWidth > 440
+                    //     ? EdgeInsetsGeometry.only(left: 100, right: 100)
+                    //     : EdgeInsetsGeometry.all(10),
+                    padding: EdgeInsetsGeometry.all(10),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        TextFormField(
+                          controller: _emailController,
+                          decoration: InputDecoration(labelText: "Email"),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Email should not null';
+                            } else if (!value.contains("@")) {
+                              return 'Enter valid email';
+                            }
+                            return null;
                           },
-                          icon: Icon(
-                            passVisible
-                                ? Icons.visibility
-                                : Icons.visibility_off,
-                          ),
                         ),
-                      ),
-                    );
-                  },
-                ),
+                        Consumer(
+                          builder: (context, refr, child) {
+                            final passVisible = refr.watch(passVisibleProvider);
+                            return TextFormField(
+                              controller: _passwordController,
+                              obscureText: passVisible,
+                              decoration: InputDecoration(
+                                labelText: "Password",
+                                suffixIcon: IconButton(
+                                  onPressed: () {
+                                    refr
+                                        .read(passVisibleProvider.notifier)
+                                        .toggle();
+                                  },
+                                  icon: Icon(
+                                    passVisible
+                                        ? Icons.visibility
+                                        : Icons.visibility_off,
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
 
-                Padding(padding: EdgeInsetsGeometry.only(top: 5, bottom: 5)),
-                Consumer(
-                  builder: (context, ref, child) {
-                    final loginProviderI = ref.watch(loginProvider);
-                    ref.listen<AsyncValue>(loginProvider, (previous, state) {
-                      // Show only when transitioning TO an error state
-                      if (previous?.hasError == false && state.hasError) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Error on logging in.')),
-                        );
-                      }
-                    });
-                    return ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        padding: EdgeInsets.all(15),
-                      ),
-                      onPressed: () {
-                        bool isFormOk = _formKey.currentState!.validate();
-                        if (isFormOk) {
-                          ref
-                              .read(loginProvider.notifier)
-                              .login(
-                                _emailController.text,
-                                _passwordController.text,
-                                context,
-                              );
-                        }
-                      },
-                      child: loginProviderI.when(
-                        data: (data) {
-                          
-                          return const Text("Login");
-                        },
-                        loading: () => CircularProgressIndicator(),
-                        error: (error, stackTrace) {
-                          if (kDebugMode) {
-                            print(error);
-                            print(stackTrace);
-                          }
-                          return const Text("Login");
-                        },
-                      ),
-                    );
-                  },
-                ),
+                        Padding(
+                          padding: EdgeInsetsGeometry.only(top: 5, bottom: 5),
+                        ),
+                        Consumer(
+                          builder: (context, ref, child) {
+                            final loginProviderI = ref.watch(loginProvider);
+                            ref.listen<AsyncValue>(loginProvider, (
+                              previous,
+                              state,
+                            ) {
+                              // Show only when transitioning TO an error state
+                              if (previous?.hasError == false &&
+                                  state.hasError) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Error on logging in.'),
+                                  ),
+                                );
+                              }
+                            });
+                            return ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                padding: EdgeInsets.all(15),
+                              ),
+                              onPressed: () {
+                                bool isFormOk = _formKey.currentState!
+                                    .validate();
+                                if (isFormOk) {
+                                  ref
+                                      .read(loginProvider.notifier)
+                                      .login(
+                                        _emailController.text,
+                                        _passwordController.text,
+                                        context,
+                                      );
+                                }
+                              },
+                              child: loginProviderI.when(
+                                data: (data) {
+                                  return const Text("Login");
+                                },
+                                loading: () => CircularProgressIndicator(),
+                                error: (error, stackTrace) {
+                                  if (kDebugMode) {
+                                    print(error);
+                                    print(stackTrace);
+                                  }
+                                  return const Text("Login");
+                                },
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),),
+                
               ],
             ),
           ),
@@ -168,5 +200,35 @@ class LoginScreen extends StatelessWidget {
         child: Icon(Icons.dynamic_feed_rounded),
       ),
     );
+  }
+}
+class MyClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    var path = Path();
+    path.moveTo(0, 0);
+    path.lineTo(size.width,0);
+    path.lineTo(size.width,size.height-60);
+   path.quadraticBezierTo(
+       size.width * 0.75,
+       size.height-60 - 60,
+       size.width * 0.5,
+       size.height -60
+   );
+  path.quadraticBezierTo(
+       size.width * 0.25,
+       size.height ,
+       0,
+       size.height - 60
+   );
+  
+    // path.lineTo(0,size.height);
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) {
+    return false;
   }
 }
