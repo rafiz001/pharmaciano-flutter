@@ -44,7 +44,7 @@ class MyApp extends ConsumerWidget {
         ),
         useMaterial3: true,
       ),
-      themeMode: ThemeMode.system,
+      themeMode: ThemeMode.light,
       initialRoute: '/',
       routes: {
         '/': (context) =>  LoginScreen(),
