@@ -33,54 +33,66 @@ class DashboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Dashboard"),
-        backgroundColor: Theme.of(context).colorScheme.onPrimary,
-        actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.pushNamed(context, '/pos');
-            },
-            icon: Icon(Icons.barcode_reader),
-            tooltip: "POS",
-          ),
-        ],
-      ),
-      body: Center(
-        child: Consumer(
-          builder: (context, ref, child) {
-            final profilePrvdr = ref.watch(profileProvider);
-            return profilePrvdr.when(
-              data: (data) {
-                return (data != null)
-                    ? Text(
-                        "Welcome, ${data.data!.profile!.name!.toUpperCase()}",
-                      )
-                    : const CircularProgressIndicator();
-              },
-              error: (error, stack) {
-                if (kDebugMode) {
-                  print(error);
-                  print(stack);
-                }
-                return Text("Something went wrong!");
-              },
-              loading: () => const CircularProgressIndicator(),
-            );
-          },
-        ),
-      ),
-      drawer: Drawer(
-        child: Column(
-          children: [
-            DrawerHeader(child: Center(child: Text("Pharmaciano"))),
-            ListTile(
-              leading: Icon(Icons.logout),
-              title: Text("Logout"),
-              onTap: () => confirmLogout(context),
+    return 
+    Center(
+      child: ClipRect(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: 440),
+          child: Scaffold(
+            appBar: AppBar(
+              title: Text("Dashboard"),
+              centerTitle: true,
+              backgroundColor:
+                  Colors.blue, //Theme.of(context).colorScheme.onPrimary,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.only(bottomLeft: Radius.circular(15) ,bottomRight: Radius.circular(15))),
+              actions: [
+                IconButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/pos');
+                  },
+                  icon: Icon(Icons.barcode_reader),
+                  tooltip: "POS",
+                ),
+              ],
             ),
-          ],
+            body: Center(
+              child: Consumer(
+                builder: (context, ref, child) {
+                  final profilePrvdr = ref.watch(profileProvider);
+                  return profilePrvdr.when(
+                    data: (data) {
+                      return (data != null)
+                          ? Text(
+                              "Welcome, ${data.data!.profile!.name!.toUpperCase()}",
+                            )
+                          : const CircularProgressIndicator();
+                    },
+                    error: (error, stack) {
+                      if (kDebugMode) {
+                        print(error);
+                        print(stack);
+                      }
+                      return Text("Something went wrong!");
+                    },
+                    loading: () => const CircularProgressIndicator(),
+                  );
+                },
+              ),
+            ),
+            drawer: Drawer(
+              child: Column(
+                children: [
+                  DrawerHeader(child: Center(child: Text("Pharmaciano"))),
+                  ListTile(
+                    leading: Icon(Icons.logout),
+                    title: Text("Logout"),
+                    onTap: () => confirmLogout(context),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
       ),
     );
