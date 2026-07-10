@@ -279,6 +279,7 @@ void callAddToCart(
 ) {
   bool found = false;
   for (final batch in data) {
+    if (batch.medicineId == null) continue;
     if (batch.medicineId!.name == medicine.name && batch.quantity! > 0) {
       found = true;
       refMain
@@ -296,5 +297,9 @@ void callAddToCart(
       break;
     }
   }
-  if (!found) print("not found");
+  if (!found) {
+    ScaffoldMessenger.of(
+      refMain.context,
+    ).showSnackBar(SnackBar(content: Text("Medicine not found in the batch!")));
+  }
 }
