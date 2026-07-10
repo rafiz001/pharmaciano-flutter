@@ -1,6 +1,6 @@
 
 class Env {
-  static String get apiBaseUrl =>  'https://pharmaciano.onrender.com';//'https://pharmaciano-backend.vercel.app';
+  static String get apiBaseUrl =>  'https://pharmaciano-backend.vercel.app'; //'https://pharmaciano.onrender.com';
   static String get apiVersion => 'v1';
   static String get jwtSecret =>  'i-am-rafiz';
   static String get appName =>  'Pharmaciano';
