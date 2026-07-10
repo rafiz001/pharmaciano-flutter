@@ -27,83 +27,106 @@ class _FinalSaleScreenState extends ConsumerState<FinalSaleScreen> {
         totalPrice -
         (totalPrice * (double.tryParse(_discountController.text) ?? 0) / 100);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Complete Sale"),
-        backgroundColor: Theme.of(context).colorScheme.onPrimary,
-      ),
+    return Center(
+      child: ClipRect(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: 440),
+          child: Scaffold(
+            appBar: AppBar(
+              title: Text("Complete Sale"),
+              centerTitle: true,
+              backgroundColor:
+                  Colors.blue, //Theme.of(context).colorScheme.onPrimary,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(15),
+                  bottomRight: Radius.circular(15),
+                ),
+              ),
+            ),
 
-      body: Column(
-        children: [
-          Card.filled(
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
+            body: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 0),
               child: Column(
                 children: [
-                  Text("Total: ${totalPrice.toStringAsFixed(2)}"),
-                  Text("Sub Total: ${discounted.toStringAsFixed(2)}"),
+                  Card.filled(
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Column(
+                        children: [
+                          Text("Total: ${totalPrice.toStringAsFixed(2)}"),
+                          Text("Sub Total: ${discounted.toStringAsFixed(2)}"),
+                        ],
+                      ),
+                    ),
+                  ),
+                  TextField(
+                    decoration: InputDecoration(labelText: "Customer Name"),
+                    controller: _nameController,
+                  ),
+                  TextField(
+                    decoration: InputDecoration(labelText: "Customer Number"),
+                    keyboardType: TextInputType.number,
+                    controller: _phoneController,
+                  ),
+                  TextField(
+                    decoration: InputDecoration(labelText: "Discount(%)"),
+                    keyboardType: TextInputType.number,
+                    controller: _discountController,
+                    onChanged: (value) {
+                      setState(() {});
+                    },
+                  ),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () {
+                      List<Map<String, dynamic>> items = [];
+                      for (final cart in carts) {
+                        items.add({
+                          "medicineName": cart.medicineName,
+                          "batchNo": cart.batchNo,
+                          "quantity": cart.quantity,
+                        });
+                      }
+                      print(jsonEncode(items));
+                      ref
+                          .read(completeSaleProvider.notifier)
+                          .makeSale(
+                            items,
+                            _nameController.text,
+                            _phoneController.text,
+                            double.tryParse(_discountController.text) ?? 0,
+                            context,
+                          );
+                    },
+                    child: Text("Complete Sale"),
+                  ),
+                  Consumer(
+                    builder: (context, reff, child) {
+                      final saleComplete = reff.watch(completeSaleProvider);
+                      return saleComplete.when(
+                        data: (data) {
+                          if (data == true)
+                            return Text("Done!");
+                          else {
+                            return Text("");
+                          }
+                        },
+                        error: (e, s) {
+                          print(e);
+                          print(s);
+                          return Text("error");
+                        },
+                        loading: () => const CircularProgressIndicator(),
+                      );
+                    },
+                  ),
                 ],
               ),
             ),
           ),
-          TextField(
-            decoration: InputDecoration(labelText: "Customer Name"),
-            controller: _nameController,
-          ),
-          TextField(
-            decoration: InputDecoration(labelText: "Customer Number"),
-            keyboardType: TextInputType.number,
-            controller: _phoneController,
-          ),
-          TextField(
-            decoration: InputDecoration(labelText: "Discount(%)"),
-            keyboardType: TextInputType.number,
-            controller: _discountController,
-            onChanged: (value) {
-              setState(() {});
-            },
-          ),
-          SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: () {
-              List<Map<String, dynamic>> items = [];
-              for (final cart in carts) {
-                items.add({
-                  "medicineName": cart.medicineName,
-                  "batchNo": cart.batchNo,
-                  "quantity": cart.quantity,
-                });
-              }
-              print(jsonEncode(items));
-              ref
-                  .read(completeSaleProvider.notifier)
-                  .makeSale(
-                    items,
-                    _nameController.text,
-                    _phoneController.text,
-                    double.tryParse(_discountController.text) ?? 0,
-                    context
-                  );
-            },
-            child: Text("Complete Sale"),
-          ),
-          Consumer(
-            builder: (context, reff, child) {
-              final saleComplete = reff.watch(completeSaleProvider);
-              return saleComplete.when(
-                data: (data) {
-                  if (data == true)
-                    return Text("Done!");
-                  else {
-                    return Text("");
-                  }
-                },
-                error: (e, s){print(e);print(s); return Text("error");},
-                loading: () => const CircularProgressIndicator(),
-              );
-            },
-          ),
-        ],
+        ),
       ),
     );
   }
